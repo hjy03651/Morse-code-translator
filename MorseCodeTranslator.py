@@ -3,7 +3,7 @@
 
 """
 Morse Code Translator (Ver 1.0.0)
-Date: 2022-07-24
+Date: 2022-08-09
 Creator: JaeyoungHan
 """
 
