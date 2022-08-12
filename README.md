@@ -11,7 +11,7 @@
 
 # Update history
 ## Ver 1.1.0
-- Bug fixed.
+- Fixed bugs.
 - Changed the design of the code table.
 - Enabled to copy the code from the code table.
 - Added a button for copying output.
