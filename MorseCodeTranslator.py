@@ -2,15 +2,19 @@
 # UTF-8 encoding when using Japanese
 
 """
-Morse Code Translator (Ver 1.0.0)
-Date: 2022-08-09
+Morse Code Translator (Ver 1.1.0)
+Date: 2022-08-12
 Creator: JaeyoungHan
+
+Version History:
+Ver 1.0.0 // 2022-08-09
 """
 
 # Import modules ===================================================
 import tkinter as tk
 from tkinter import messagebox as msg
 from tkinter import ttk as ttk
+import pyperclip as clip
 
 
 # Declare Necessary Dictionaries ===================================
@@ -160,11 +164,12 @@ def occur_error():
 def exit_window(_=None):
     """
     Close the program
-    :param _: Key binding (Shift + Q)
+    :param _: Key binding (Ctrl + Q)
     :return: None
     """
-    msg.showwarning('Quit', 'Exit the program.')
-    root.destroy()
+    msg_quit = msg.askquestion('Quit', 'Really quit?')
+    if msg_quit == 'yes':
+        root.destroy()
 
 
 # Declare functions for converting =================================
@@ -283,76 +288,97 @@ def clear_all(_=None):
 def view_code(_=None):
     """
     Show whole code
-    :param _: Key binding (Shift + W)
+    :param _: Key binding (Ctrl + W)
     :return: None
     """
+    # main window
     table = tk.Toplevel(root)
     table.title('Morse Code List')
-    table.geometry('573x300+200+200')
+    table.geometry('250x270+500+300')
     table.resizable(False, False)
-    table['bg'] = '#CCCCCC'
+    table['bg'] = color_bg1
 
-    label_eng_code = tk.Label(table, text='English Morse Code', fg=color_fg1, bg=color_bg2)
-    label_jpn_code = tk.Label(table, text='Japanese Morse Code', fg=color_fg1, bg=color_bg2)
-    label_sym_code = tk.Label(table, text='Symbol Morse Code', fg=color_fg1, bg=color_bg2)
-    label_eng_code.place(x=30, y=10)
-    label_jpn_code.place(x=225, y=10)
-    label_sym_code.place(x=427, y=10)
+    # listbox
+    language_list = tk.Listbox(table, exportselection=False, selectmode='extended', width=0, height=0)
+    language_list.insert(0, 'English')
+    language_list.insert(1, 'Japanese')
+    language_list.place(x=10, y=10)
 
+    # label
+    label_tip = tk.Label(table, text='[Ctrl + C] or Double click to copy the code',
+                         font=(font, 9), fg=color_fg2, bg=color_bg1)
+    label_tip.place(x=10, y=240)
+
+    # button
+    button_exit = tk.Button(table, text='exit', font=(font, 10), width=6,
+                            command=lambda: table.destroy(), fg=color_fg1, bg=color_bg2)
+    button_exit.place(x=10, y=200)
+
+    # treeview
     column = ['alphabet', 'code']
+    code_table = ttk.Treeview(table, columns=column, displaycolumns=column)
+    code_table.place(x=75, y=10)
+    code_table.column(column[0], width=80, anchor='center')
+    code_table.heading(column[0], text='Language', anchor='center')
+    code_table.column(column[1], width=80, anchor='center')
+    code_table.heading(column[1], text='Morse', anchor='center')
+    code_table['show'] = 'headings'
 
-    # > display an English-morse table
-    eng_table = ttk.Treeview(table, columns=column, displaycolumns=column)
-    eng_table.place(x=10, y=30)
-    eng_table.column(column[0], width=70, anchor='center')
-    eng_table.heading(column[0], text='English', anchor='center')
-    eng_table.column(column[1], width=80, anchor='center')
-    eng_table.heading(column[1], text='Morse', anchor='center')
-    tree_value = list(reverse_morse_eng.items())
-    eng_table['show'] = 'headings'
-    for i in range(len(tree_value)):
-        eng_table.insert('', 'end', text='', values=tree_value[i], iid=i)
-
-    # > display a Japanese-morse table
-    jpn_table = ttk.Treeview(table, columns=column, displaycolumns=column)
-    jpn_table.place(x=210, y=30)
-    jpn_table.column(column[0], width=70, anchor='center')
-    jpn_table.heading(column[0], text='Japanese', anchor='center')
-    jpn_table.column(column[1], width=80, anchor='center')
-    jpn_table.heading(column[1], text='Morse', anchor='center')
-    sym_add_list = list(reverse_morse_jpn_sym.items())[10:14]
-    tree_value = list(reverse_morse_jpn.items()) + sym_add_list
-    jpn_table['show'] = 'headings'
-    for i in range(len(tree_value)):
-        jpn_table.insert('', 'end', text='', values=tree_value[i], iid=i)
-
-    # > display a symbol-morse table
-    sym_table = ttk.Treeview(table, columns=column, displaycolumns=column)
-    sym_table.place(x=410, y=30)
-    sym_table.column(column[0], width=70, anchor='center')
-    sym_table.heading(column[0], text='Symbol', anchor='center')
-    sym_table.column(column[1], width=80, anchor='center')
-    sym_table.heading(column[1], text='Morse', anchor='center')
-    tree_value = list(reverse_morse_eng_sym.items())
-    sym_table['show'] = 'headings'
-    for i in range(len(tree_value)):
-        sym_table.insert('', 'end', text='', values=tree_value[i], iid=i)
-
-    def quit_table(_=None):
+    # functions
+    def select_language(_):
         """
-        Close the table
-        :param _: Key binding (Escape)
+        Show the selected language on the table
+        :param _: Key binding (Select listbox)
         :return: None
         """
-        table.destroy()
+        # > initializing
+        code_table.delete(*code_table.get_children())  # initialize the treeview
+        code_table.yview_moveto(0)  # initialize the scrollbar
 
-    button_close = tk.Button(table, text='Close', command=quit_table, fg=color_fg1, bg=color_bg2)
-    button_close.place(x=260, y=265)
+        # > show the table
+        value = language_list.get(language_list.curselection())  # selected language
+        if value == 'English':
+            code_table.heading(column[0], text='English', anchor='center')
+            tree_value = list(reverse_morse_eng.items()) + list(reverse_morse_eng_sym.items())
+            for i in range(len(tree_value)):
+                code_table.insert('', 'end', text='', values=tree_value[i], iid=i)
+        else:
+            code_table.heading(column[0], text='Japanese', anchor='center')
+            tree_value = list(reverse_morse_jpn.items()) + list(reverse_morse_jpn_sym.items())
+            for i in range(len(tree_value)):
+                code_table.insert('', 'end', text='', values=tree_value[i], iid=i)
 
-    # > key binding
-    table.bind('<Escape>', quit_table)
+        # > set scrollbar
+        scroll = ttk.Scrollbar(table, orient='vertical', command=code_table.yview)
+        scroll.place(x=237, y=10, height=225)
+        code_table.configure(yscrollcommand=scroll.set)
+
+    def copy_in_clipboard(_):
+        """
+        Copy the code from the box
+        :param _: Key binding (Double-click or Ctrl + C)
+        :return: None
+        """
+        selections = code_table.selection()
+        copy_word = code_table.item(selections, 'values')
+        clip.copy(copy_word[1] + ' ')
+
+    # binding
+    language_list.bind('<<ListboxSelect>>', select_language)
+    code_table.bind('<Double-Button-1>', copy_in_clipboard)
+    code_table.bind('<Control-Key-c>', copy_in_clipboard)
+    table.bind('<Escape>', lambda e: table.destroy())
 
     table.mainloop()
+
+
+def copy_output():
+    """
+    Copy the text of the output column
+    :return: None
+    """
+    output = entry_output.get()
+    clip.copy(output)
 
 
 # Font & Colors ====================================================
@@ -367,12 +393,12 @@ color_fg2 = '#222222'
 # > main window
 root = tk.Tk()
 root.title('Morse Code Translator')
-root.geometry('500x370')
+root.geometry('500x370+100+100')
 root.resizable(False, False)
 root['bg'] = color_bg1
 
 # > version
-label_version = tk.Label(root, text='Ver 1.0.0', font=(font, 10), fg='blue', bg=color_bg1)
+label_version = tk.Label(root, text='Ver 1.1.0', font=(font, 10), fg='blue', bg=color_bg1)
 label_version.place(x=440, y=344)
 
 # > attention
@@ -380,12 +406,12 @@ attention_eng = '* Please select the menu and enter the text in the "input" colu
 attention_jpn = '* メニューを選んで、「input」欄に入力してください。ひらがなのみお願いします。*'
 label_attention_eng = tk.Label(root, text=attention_eng, font=(font, 11), fg='red', bg=color_bg1)
 label_attention_jpn = tk.Label(root, text=attention_jpn, font=(font, 11), fg='red', bg=color_bg1)
-label_attention_eng.place(x=10, y=10)
-label_attention_jpn.place(x=10, y=30)
+label_attention_eng.place(x=25, y=7)
+label_attention_jpn.place(x=20, y=27)
 
 # > menu
 label_menu = tk.Label(root, text='Menu', font=(font, 11), fg=color_fg1, bg=color_bg2)
-label_menu.place(x=10, y=75)
+label_menu.place(x=10, y=70)
 
 menu_var = tk.IntVar()
 btn_eng_to_morse = tk.Radiobutton(root, text="Eng → Morse", value=1, variable=menu_var, bg=color_bg1)
@@ -409,9 +435,11 @@ entry_input.place(x=10, y=180, height=20)
 button_convert = tk.Button(text='convert', font=(font, 10), command=start_convert, fg=color_fg1, bg=color_bg2)
 button_clear = tk.Button(text='clear', font=(font, 10), command=clear_all, fg=color_fg1, bg=color_bg2)
 button_code = tk.Button(text='code list', font=(font, 10), command=view_code, fg=color_fg1, bg=color_bg2)
-button_convert.place(x=70, y=230, width=100)
-button_clear.place(x=200, y=230, width=100)
-button_code.place(x=330, y=230, width=100)
+button_copy = tk.Button(text='copy output', font=(font, 10), command=copy_output, fg=color_fg1, bg=color_bg2)
+button_convert.place(x=35, y=230, width=100)
+button_clear.place(x=145, y=230, width=100)
+button_code.place(x=255, y=230, width=100)
+button_copy.place(x=365, y=230, width=100)
 
 # > output entry
 label_output = tk.Label(root, text='Output', font=(font, 11), fg=color_fg1, bg=color_bg2)
@@ -420,16 +448,16 @@ entry_output = tk.Entry(width=68)
 entry_output.place(x=10, y=300, height=20)
 
 # > shortcuts
-label_shortcut1 = tk.Label(root, text='[Shift + Q] to quit the program', font=(font, 9), fg=color_fg2, bg=color_bg1)
-label_shortcut2 = tk.Label(root, text='[Shift + W] to view the codes', font=(font, 9), fg=color_fg2, bg=color_bg1)
+label_shortcut1 = tk.Label(root, text='[Ctrl + Q] to quit the program', font=(font, 9), fg=color_fg2, bg=color_bg1)
+label_shortcut2 = tk.Label(root, text='[Ctrl + W] to view the codes', font=(font, 9), fg=color_fg2, bg=color_bg1)
 label_shortcut1.place(x=10, y=325)
 label_shortcut2.place(x=10, y=344)
 
 # > key binding
 root.bind('<Return>', start_convert)
 root.bind('<Escape>', clear_all)
-root.bind('<Shift-Q>', exit_window)
-root.bind('<Shift-W>', view_code)
+root.bind('<Control-q>', exit_window)
+root.bind('<Control-w>', view_code)
 
 # > quit program
 root.protocol('WM_DELETE_WINDOW', exit_window)
