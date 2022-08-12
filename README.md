@@ -14,6 +14,6 @@
 - Bug fixed.
 - Changed the design of the code table.
 - Enabled to copy the code from the code table.
-- Added a button for copy output.
+- Added a button for copying output.
 ## Ver 1.0.0
 - First commit.
