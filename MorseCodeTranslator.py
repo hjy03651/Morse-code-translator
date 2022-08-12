@@ -2,12 +2,13 @@
 # UTF-8 encoding when using Japanese
 
 """
-Morse Code Translator (Ver 1.1.0)
+Morse Code Translator (Ver 1.1.1)
 Date: 2022-08-12
 Creator: JaeyoungHan
 
 Version History:
 Ver 1.0.0 // 2022-08-09
+Ver 1.1.0 // 2022-08-12
 """
 
 # Import modules ===================================================
@@ -340,13 +341,12 @@ def view_code(_=None):
         if value == 'English':
             code_table.heading(column[0], text='English', anchor='center')
             tree_value = list(reverse_morse_eng.items()) + list(reverse_morse_eng_sym.items())
-            for i in range(len(tree_value)):
-                code_table.insert('', 'end', text='', values=tree_value[i], iid=i)
         else:
             code_table.heading(column[0], text='Japanese', anchor='center')
             tree_value = list(reverse_morse_jpn.items()) + list(reverse_morse_jpn_sym.items())
-            for i in range(len(tree_value)):
-                code_table.insert('', 'end', text='', values=tree_value[i], iid=i)
+
+        for i in range(len(tree_value)):
+            code_table.insert('', 'end', text='', values=tree_value[i], iid=i)
 
         # > set scrollbar
         scroll = ttk.Scrollbar(table, orient='vertical', command=code_table.yview)
@@ -367,18 +367,9 @@ def view_code(_=None):
     language_list.bind('<<ListboxSelect>>', select_language)
     code_table.bind('<Double-Button-1>', copy_in_clipboard)
     code_table.bind('<Control-Key-c>', copy_in_clipboard)
-    table.bind('<Escape>', lambda e: table.destroy())
+    table.bind('<Escape>', lambda _: table.destroy())
 
     table.mainloop()
-
-
-def copy_output():
-    """
-    Copy the text of the output column
-    :return: None
-    """
-    output = entry_output.get()
-    clip.copy(output)
 
 
 # Font & Colors ====================================================
@@ -431,21 +422,22 @@ label_input.place(x=10, y=155)
 entry_input = tk.Entry(width=68)
 entry_input.place(x=10, y=180, height=20)
 
-# > buttons
-button_convert = tk.Button(text='convert', font=(font, 10), command=start_convert, fg=color_fg1, bg=color_bg2)
-button_clear = tk.Button(text='clear', font=(font, 10), command=clear_all, fg=color_fg1, bg=color_bg2)
-button_code = tk.Button(text='code list', font=(font, 10), command=view_code, fg=color_fg1, bg=color_bg2)
-button_copy = tk.Button(text='copy output', font=(font, 10), command=copy_output, fg=color_fg1, bg=color_bg2)
-button_convert.place(x=35, y=230, width=100)
-button_clear.place(x=145, y=230, width=100)
-button_code.place(x=255, y=230, width=100)
-button_copy.place(x=365, y=230, width=100)
-
 # > output entry
 label_output = tk.Label(root, text='Output', font=(font, 11), fg=color_fg1, bg=color_bg2)
 label_output.place(x=10, y=275)
 entry_output = tk.Entry(width=68)
 entry_output.place(x=10, y=300, height=20)
+
+# > buttons
+button_convert = tk.Button(text='convert', font=(font, 10), command=start_convert, fg=color_fg1, bg=color_bg2)
+button_clear = tk.Button(text='clear', font=(font, 10), command=clear_all, fg=color_fg1, bg=color_bg2)
+button_code = tk.Button(text='code list', font=(font, 10), command=view_code, fg=color_fg1, bg=color_bg2)
+button_copy = tk.Button(text='copy output', font=(font, 10),
+                        command=lambda: clip.copy(entry_output.get()), fg=color_fg1, bg=color_bg2)
+button_convert.place(x=35, y=230, width=100)
+button_clear.place(x=145, y=230, width=100)
+button_code.place(x=255, y=230, width=100)
+button_copy.place(x=365, y=230, width=100)
 
 # > shortcuts
 label_shortcut1 = tk.Label(root, text='[Ctrl + Q] to quit the program', font=(font, 9), fg=color_fg2, bg=color_bg1)
