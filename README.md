@@ -11,6 +11,8 @@
 - Click the "code list" button to view all of the morse codes.
 
 # Update history
+## Ver 1.1.1
+- Fixed some codes.
 ## Ver 1.1.0
 - Fixed bugs.
 - Changed the design of the code table.
