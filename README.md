@@ -2,7 +2,8 @@
 - A translator for morse code.
 
 # Support langauge
-- English and Japanese support.
+- English
+- Japanese
 
 # How to use
 - From the menu, choose the language (or code) you wish to convert, then enter it in the "Input" field. And click the "convert" button or hit Return to convert it into the "Output" column.
