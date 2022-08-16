@@ -16,6 +16,7 @@
 - Added a menu bar.
   - Menu 'Info': 'Code list', 'Help', 'About..', 'Exit'
   - Menu 'Options': 'Languages'
+- Deleted the black screen(cmd) that appears when the program starts.
 ## Ver 1.1.1
 - Fixed some codes.
 ## Ver 1.1.0
