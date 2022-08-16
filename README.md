@@ -11,6 +11,8 @@
 - Click the "code list" button to view all of the morse codes.
 
 # Update history
+## Ver 1.2.1
+- Fixed bugs.
 ## Ver 1.2.0
 - Enabled to change the langauge of the program to English, Japanese, Korean.
 - Added a menu bar.
