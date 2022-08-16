@@ -2,7 +2,7 @@
 # UTF-8 encoding when using Japanese
 
 """
-Morse Code Translator (Ver 1.2.0)
+Morse Code Translator (Ver 1.2.1)
 Date: 2022-08-16
 Creator: JaeyoungHan
 
@@ -10,12 +10,13 @@ Version History:
 Ver 1.0.0 // 2022-08-09
 Ver 1.1.0 // 2022-08-12
 Ver 1.1.1 // 2022-08-12
+Ver 1.2.0 // 2022-08-16
 """
 
 # Import modules ===================================================
 import tkinter as tk
 from tkinter import messagebox as msg
-from tkinter import ttk as ttk
+from tkinter import ttk
 import pyperclip as clip
 
 
@@ -78,22 +79,21 @@ def text_to_morse(text, select):
     output = ''
     if select == 'eng':
         for t in text:
-            if t in reverse_morse_eng:
+            if t in reverse_morse_eng.keys():
                 output += reverse_morse_eng[t] + ' '
             elif t.isspace():
                 continue
             else:
                 output += reverse_morse_eng_sym.get(t, '[?]') + ' '
-        return output
     else:
         for t in text:
-            if t in reverse_morse_jpn:
+            if t in reverse_morse_jpn.keys():
                 output += reverse_morse_jpn[t] + ' '
             elif t.isspace():
                 continue
             else:
                 output += reverse_morse_jpn_sym.get(t, '[?]') + ' '
-        return output
+    return output
 
 
 def morse_to_text(text, select):
@@ -110,14 +110,13 @@ def morse_to_text(text, select):
                 output += morse_eng[t]
             else:
                 output += morse_eng_sym.get(t, '[?]')
-        return output
     elif select == 'jpn':
         for t in text:
             if t in morse_jpn.keys():
                 output += morse_jpn[t]
             else:
                 output += morse_jpn_sym.get(t, '[?]')
-        return output
+    return output
 
 
 def attach_ten(kana, ten):
@@ -127,15 +126,14 @@ def attach_ten(kana, ten):
     :param ten: The type of dot to attach to the letter
     :return: Dotted character
     """
-    if kana in kana_to_dakuten.keys():
-        if ten == 'daku':
-            return kana_to_dakuten[kana]
-        elif ten == 'handaku':
-            return kana_to_handakuten[kana]
+    if ten == 'daku' and kana in kana_to_dakuten.keys():
+        return kana_to_dakuten[kana]
+    elif ten == 'handaku' and kana in kana_to_handakuten.keys():
+        return kana_to_handakuten[kana]
     else:
         if ten == 'daku':
             return kana + '゛'
-        elif ten == 'handaku':
+        if ten == 'handaku':
             return kana + '゜'
 
 
@@ -148,7 +146,7 @@ def release_ten(kana, select):
     """
     if select == 'handaku':
         return handakuten_to_kana[kana] + '゜'
-    elif select == 'daku':
+    if select == 'daku':
         return dakuten_to_kana[kana] + '゛'
 
 
@@ -184,9 +182,8 @@ def change_english_to_morse(text):
     text = text.lower()
     if not text:
         return occur_error()
-    else:
-        output = text_to_morse(text, 'eng')
-        return output
+    output = text_to_morse(text, 'eng')
+    return output
 
 
 def change_japanese_to_morse(text):
@@ -198,19 +195,18 @@ def change_japanese_to_morse(text):
     output = ''
     if not text:
         return occur_error()
-    else:
-        for k in text:
-            if k in dakuten_to_kana.keys():
-                output += release_ten(k, 'daku')
-            elif k in handakuten_to_kana.keys():
-                output += release_ten(k, 'handaku')
-            elif k in small_kana.keys():
-                output += small_kana[k]
-            else:
-                output += k
+    for k in text:
+        if k in dakuten_to_kana.keys():
+            output += release_ten(k, 'daku')
+        elif k in handakuten_to_kana.keys():
+            output += release_ten(k, 'handaku')
+        elif k in small_kana.keys():
+            output += small_kana[k]
+        else:
+            output += k
 
-        encoding = text_to_morse(output, 'jpn')
-        return encoding
+    encoding = text_to_morse(output, 'jpn')
+    return encoding
 
 
 def change_morse_to_english(text):
@@ -222,9 +218,8 @@ def change_morse_to_english(text):
     text = text.lower().split()
     if not text:
         return occur_error()
-    else:
-        output = morse_to_text(text, 'eng')
-        return output
+    output = morse_to_text(text, 'eng')
+    return output
 
 
 def change_morse_to_japanese(text):
@@ -236,15 +231,15 @@ def change_morse_to_japanese(text):
     text = text.lower().split()
     if not text:
         return occur_error()
-    else:
-        output = morse_to_text(text, 'jpn')
-        for k in output:
-            index = output.index(k)
-            if k == '゛':
-                output = output[:index - 1] + attach_ten(output[index - 1], 'daku') + output[index + 1:]
-            elif k == '゜':
-                output = output[:index - 1] + attach_ten(output[index - 1], 'handaku') + output[index + 1:]
-        return output
+
+    output = morse_to_text(text, 'jpn')
+    for k in output:
+        index = output.index(k)
+        if k == '゛':
+            output = output[:index - 1] + attach_ten(output[index - 1], 'daku') + output[index + 1:]
+        elif k == '゜':
+            output = output[:index - 1] + attach_ten(output[index - 1], 'handaku') + output[index + 1:]
+    return output
 
 
 # Declare functions for button event ===============================
@@ -298,7 +293,7 @@ def view_code(_=None):
     table.title(titles[1])
     table.geometry('250x270+500+300')
     table.resizable(False, False)
-    table['bg'] = color_bg1
+    table['bg'] = COLOR_BG1
 
     table.focus_set()
 
@@ -310,12 +305,12 @@ def view_code(_=None):
 
     # label
     label_tip = tk.Label(table, text=shortcuts[1],
-                         font=(font, 9), fg=color_fg2, bg=color_bg1)
+                         font=(font, 9), fg=COLOR_FG2, bg=COLOR_BG1)
     label_tip.place(x=10, y=240)
 
     # button
     button_exit = tk.Button(table, text=buttons[3], font=(font, 10), width=6,
-                            command=lambda: table.destroy(), fg=color_fg1, bg=color_bg2)
+                            command=table.destroy, fg=COLOR_FG1, bg=COLOR_BG2)
     button_exit.place(x=10, y=200)
 
     # treeview
@@ -348,8 +343,8 @@ def view_code(_=None):
             code_table.heading(column[0], text='Japanese', anchor='center')
             tree_value = list(reverse_morse_jpn.items()) + list(reverse_morse_jpn_sym.items())
 
-        for i in range(len(tree_value)):
-            code_table.insert('', 'end', text='', values=tree_value[i], iid=i)
+        for i, v in enumerate(tree_value):
+            code_table.insert('', 'end', text='', values=v, iid=i)
 
         # > set scrollbar
         scroll = ttk.Scrollbar(table, orient='vertical', command=code_table.yview)
@@ -375,6 +370,7 @@ def view_code(_=None):
     table.mainloop()
 
 
+# Declare functions for menu =======================================
 def open_help(_=None):
     """
     Open menu 'Help'
@@ -386,20 +382,20 @@ def open_help(_=None):
     table.title(titles[2])
     table.geometry('590x130+500+300')
     table.resizable(False, False)
-    table['bg'] = color_bg1
+    table['bg'] = COLOR_BG1
 
     table.focus_set()
     table.grab_set()
 
     # label
-    explain_frame = tk.Frame(table, height=120, width=580, relief='ridge', bd=2, bg=color_bg1, padx=2, pady=2)
-    label_explain = tk.Label(table, text=explain, font=(font, 11), fg=color_fg2, bg=color_bg1, justify='left')
+    explain_frame = tk.Frame(table, height=120, width=580, relief='ridge', bd=2, bg=COLOR_BG1, padx=2, pady=2)
+    label_explain = tk.Label(table, text=explain, font=(font, 11), fg=COLOR_FG2, bg=COLOR_BG1, justify='left')
     explain_frame.place(x=5, y=5)
     label_explain.place(x=10, y=10)
 
     # button
     button_close = tk.Button(table, text=buttons[3], font=(font, 10), width=10,
-                             command=lambda: table.destroy(), fg=color_fg1, bg=color_bg2)
+                             command=table.destroy, fg=COLOR_FG1, bg=COLOR_BG2)
     button_close.place(x=490, y=85)
 
     # key binding
@@ -417,18 +413,18 @@ def open_program_info(_=None):
     table.title(titles[3])
     table.geometry('250x100+500+300')
     table.resizable(False, False)
-    table['bg'] = color_bg1
+    table['bg'] = COLOR_BG1
 
     table.focus_set()
     table.grab_set()
 
     # label
-    label_info = tk.Label(table, text=info, font=(font, 10), fg=color_fg2, bg=color_bg1, justify='left')
+    label_info = tk.Label(table, text=info, font=(font, 10), fg=COLOR_FG2, bg=COLOR_BG1, justify='left')
     label_info.place(x=10, y=10)
 
     # button
     button_close = tk.Button(table, text=buttons[3], font=(font, 10), width=7,
-                             command=lambda: table.destroy(), fg=color_fg1, bg=color_bg2)
+                             command=table.destroy, fg=COLOR_FG1, bg=COLOR_BG2)
     button_close.place(x=180, y=60)
 
     # key binding
@@ -517,11 +513,11 @@ def change_language():
 
 # Font & Colors ====================================================
 font = 'Yu Gothic UI'
-color_bg1 = '#CCCCCC'  # light gray
-color_bg2 = '#666666'  # dark gray
-color_fg1 = '#F3F3F3'  # white
-color_fg2 = '#222222'  # black
-color_blue = '#1e80c1'  # blue
+COLOR_BG1 = '#CCCCCC'  # light gray
+COLOR_BG2 = '#666666'  # dark gray
+COLOR_FG1 = '#F3F3F3'  # white
+COLOR_FG2 = '#222222'  # black
+COLOR_FG3 = '#1e80c1'  # blue
 
 
 # Texts ============================================================
@@ -546,7 +542,7 @@ root = tk.Tk()
 root.title(titles[0])
 root.geometry('500x315+100+100')
 root.resizable(False, False)
-root['bg'] = color_bg1
+root['bg'] = COLOR_BG1
 
 # > menu
 menubar = tk.Menu(root)
@@ -571,22 +567,22 @@ menubar.add_cascade(label='Options', menu=menu_config)
 root.config(menu=menubar)
 
 # > frame
-menu_frame = tk.Frame(root, height=85, width=300, relief='ridge', bd=2, bg=color_bg1, padx=2, pady=2)
+menu_frame = tk.Frame(root, height=85, width=300, relief='ridge', bd=2, bg=COLOR_BG1, padx=2, pady=2)
 menu_frame.place(x=5, y=5)
-input_frame = tk.Frame(root, height=57, width=490, relief='ridge', bd=2, bg=color_bg1, padx=2, pady=2)
+input_frame = tk.Frame(root, height=57, width=490, relief='ridge', bd=2, bg=COLOR_BG1, padx=2, pady=2)
 input_frame.place(x=5, y=95)
-output_frame = tk.Frame(root, height=57, width=490, relief='ridge', bd=2, bg=color_bg1, padx=2, pady=2)
+output_frame = tk.Frame(root, height=57, width=490, relief='ridge', bd=2, bg=COLOR_BG1, padx=2, pady=2)
 output_frame.place(x=5, y=215)
 
 # > selection
-label_menu = tk.Label(root, text='Menu', font=(font, 11), fg=color_fg1, bg=color_bg2)
+label_menu = tk.Label(root, text='Menu', font=(font, 11), fg=COLOR_FG1, bg=COLOR_BG2)
 label_menu.place(x=10, y=10)
 
 menu_var = tk.IntVar()
-btn_eng_to_morse = tk.Radiobutton(root, text=translate[0], font=(font, 9), value=1, variable=menu_var, bg=color_bg1)
-btn_morse_to_eng = tk.Radiobutton(root, text=translate[1], font=(font, 9), value=2, variable=menu_var, bg=color_bg1)
-btn_jpn_to_morse = tk.Radiobutton(root, text=translate[2], font=(font, 9), value=3, variable=menu_var, bg=color_bg1)
-btn_morse_to_jpn = tk.Radiobutton(root, text=translate[3], font=(font, 9), value=4, variable=menu_var, bg=color_bg1)
+btn_eng_to_morse = tk.Radiobutton(root, text=translate[0], font=(font, 9), value=1, variable=menu_var, bg=COLOR_BG1)
+btn_morse_to_eng = tk.Radiobutton(root, text=translate[1], font=(font, 9), value=2, variable=menu_var, bg=COLOR_BG1)
+btn_jpn_to_morse = tk.Radiobutton(root, text=translate[2], font=(font, 9), value=3, variable=menu_var, bg=COLOR_BG1)
+btn_morse_to_jpn = tk.Radiobutton(root, text=translate[3], font=(font, 9), value=4, variable=menu_var, bg=COLOR_BG1)
 btn_eng_to_morse.select()
 
 btn_eng_to_morse.place(x=10, y=40)
@@ -595,32 +591,32 @@ btn_jpn_to_morse.place(x=10, y=60)
 btn_morse_to_jpn.place(x=150, y=60)
 
 # > input entry
-label_input = tk.Label(root, text='Input', font=(font, 11), fg=color_fg1, bg=color_bg2)
+label_input = tk.Label(root, text='Input', font=(font, 11), fg=COLOR_FG1, bg=COLOR_BG2)
 label_input.place(x=10, y=100)
 entry_input = tk.Entry(width=59, font=(font, 11))
 entry_input.place(x=10, y=125, height=20)
 
 # > output entry
-label_output = tk.Label(root, text='Output', font=(font, 11), fg=color_fg1, bg=color_bg2)
+label_output = tk.Label(root, text='Output', font=(font, 11), fg=COLOR_FG1, bg=COLOR_BG2)
 label_output.place(x=10, y=220)
-entry_output = tk.Entry(width=59, font=(font, 11), fg=color_blue)
+entry_output = tk.Entry(width=59, font=(font, 11), fg=COLOR_FG3)
 entry_output.place(x=10, y=245, height=20)
 
 # > buttons
-button_convert = tk.Button(text=buttons[0], font=(font, 10), command=start_convert, fg=color_fg1, bg=color_bg2)
-button_clear = tk.Button(text=buttons[1], font=(font, 10), command=clear_all, fg=color_fg1, bg=color_bg2)
+button_convert = tk.Button(text=buttons[0], font=(font, 10), command=start_convert, fg=COLOR_FG1, bg=COLOR_BG2)
+button_clear = tk.Button(text=buttons[1], font=(font, 10), command=clear_all, fg=COLOR_FG1, bg=COLOR_BG2)
 button_copy = tk.Button(text=buttons[2], font=(font, 10),
-                        command=lambda: clip.copy(entry_output.get()), fg=color_fg1, bg=color_bg2)
+                        command=lambda: clip.copy(entry_output.get()), fg=COLOR_FG1, bg=COLOR_BG2)
 button_convert.place(x=80, y=168, width=100)
 button_clear.place(x=200, y=168, width=100)
 button_copy.place(x=320, y=168, width=100)
 
 # > shortcuts
-label_shortcut = tk.Label(root, text=shortcuts[0], font=(font, 9), fg=color_fg2, bg=color_bg1)
+label_shortcut = tk.Label(root, text=shortcuts[0], font=(font, 9), fg=COLOR_FG2, bg=COLOR_BG1)
 label_shortcut.place(x=10, y=289)
 
 # > version
-label_version = tk.Label(root, text='Ver 1.2.0', font=(font, 10), fg='blue', bg=color_bg1)
+label_version = tk.Label(root, text='Ver 1.2.0', font=(font, 10), fg='blue', bg=COLOR_BG1)
 label_version.place(x=440, y=289)
 
 # > key binding
