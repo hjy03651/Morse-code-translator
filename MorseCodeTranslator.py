@@ -2,13 +2,14 @@
 # UTF-8 encoding when using Japanese
 
 """
-Morse Code Translator (Ver 1.1.1)
-Date: 2022-08-12
+Morse Code Translator (Ver 1.2.0)
+Date: 2022-08-16
 Creator: JaeyoungHan
 
 Version History:
 Ver 1.0.0 // 2022-08-09
 Ver 1.1.0 // 2022-08-12
+Ver 1.1.1 // 2022-08-12
 """
 
 # Import modules ===================================================
@@ -77,7 +78,7 @@ def text_to_morse(text, select):
     output = ''
     if select == 'eng':
         for t in text:
-            if t.isalpha():
+            if t in reverse_morse_eng:
                 output += reverse_morse_eng[t] + ' '
             elif t.isspace():
                 continue
@@ -86,7 +87,7 @@ def text_to_morse(text, select):
         return output
     else:
         for t in text:
-            if t.isalpha():
+            if t in reverse_morse_jpn:
                 output += reverse_morse_jpn[t] + ' '
             elif t.isspace():
                 continue
@@ -156,7 +157,7 @@ def occur_error():
     Display a messagebox when an error occurs
     :return: Blank
     """
-    msg.showwarning('Error', 'The input column is blank.')
+    msg.showwarning(titles[4], messages[0])
     label_input['text'] = 'Input'
     label_output['text'] = 'Output'
     return ''
@@ -168,7 +169,7 @@ def exit_window(_=None):
     :param _: Key binding (Ctrl + Q)
     :return: None
     """
-    msg_quit = msg.askquestion('Quit', 'Really quit?')
+    msg_quit = msg.askquestion(titles[5], messages[1])
     if msg_quit == 'yes':
         root.destroy()
 
@@ -294,10 +295,12 @@ def view_code(_=None):
     """
     # main window
     table = tk.Toplevel(root)
-    table.title('Morse Code List')
+    table.title(titles[1])
     table.geometry('250x270+500+300')
     table.resizable(False, False)
     table['bg'] = color_bg1
+
+    table.focus_set()
 
     # listbox
     language_list = tk.Listbox(table, exportselection=False, selectmode='extended', width=0, height=0)
@@ -306,12 +309,12 @@ def view_code(_=None):
     language_list.place(x=10, y=10)
 
     # label
-    label_tip = tk.Label(table, text='[Ctrl + C] or Double click to copy the code',
+    label_tip = tk.Label(table, text=shortcuts[1],
                          font=(font, 9), fg=color_fg2, bg=color_bg1)
     label_tip.place(x=10, y=240)
 
     # button
-    button_exit = tk.Button(table, text='exit', font=(font, 10), width=6,
+    button_exit = tk.Button(table, text=buttons[3], font=(font, 10), width=6,
                             command=lambda: table.destroy(), fg=color_fg1, bg=color_bg2)
     button_exit.place(x=10, y=200)
 
@@ -372,84 +375,261 @@ def view_code(_=None):
     table.mainloop()
 
 
+def open_help(_=None):
+    """
+    Open menu 'Help'
+    :param _: Key binding (F1)
+    :return: None
+    """
+    # main window
+    table = tk.Toplevel(root)
+    table.title(titles[2])
+    table.geometry('590x130+500+300')
+    table.resizable(False, False)
+    table['bg'] = color_bg1
+
+    table.focus_set()
+    table.grab_set()
+
+    # label
+    explain_frame = tk.Frame(table, height=120, width=580, relief='ridge', bd=2, bg=color_bg1, padx=2, pady=2)
+    label_explain = tk.Label(table, text=explain, font=(font, 11), fg=color_fg2, bg=color_bg1, justify='left')
+    explain_frame.place(x=5, y=5)
+    label_explain.place(x=10, y=10)
+
+    # button
+    button_close = tk.Button(table, text=buttons[3], font=(font, 10), width=10,
+                             command=lambda: table.destroy(), fg=color_fg1, bg=color_bg2)
+    button_close.place(x=490, y=85)
+
+    # key binding
+    table.bind('<Escape>', lambda _: table.destroy())
+
+
+def open_program_info(_=None):
+    """
+    Open menu 'program info'
+    :param _: Key binding (F12)
+    :return: None
+    """
+    # main window
+    table = tk.Toplevel(root)
+    table.title(titles[3])
+    table.geometry('250x100+500+300')
+    table.resizable(False, False)
+    table['bg'] = color_bg1
+
+    table.focus_set()
+    table.grab_set()
+
+    # label
+    label_info = tk.Label(table, text=info, font=(font, 10), fg=color_fg2, bg=color_bg1, justify='left')
+    label_info.place(x=10, y=10)
+
+    # button
+    button_close = tk.Button(table, text=buttons[3], font=(font, 10), width=7,
+                             command=lambda: table.destroy(), fg=color_fg1, bg=color_bg2)
+    button_close.place(x=180, y=60)
+
+    # key binding
+    table.bind('<Escape>', lambda _: table.destroy())
+
+
+def change_language():
+    """
+    Change the language of the program.
+    :return: None
+    """
+    global titles, messages, translate, buttons, shortcuts, explain, info, font
+    if language.get() == 1:  # English
+        titles = ['Morse Code Translator', 'Code List', 'Help', 'Info', 'Error', 'Quit']
+        messages = ['The input column is blank.', 'Really quit?']
+        translate = ['Eng → Morse', 'Morse → Eng', 'Jpn → Morse', 'Morse → Jpn']
+        buttons = ['convert', 'clear', 'copy output', 'exit']
+        shortcuts = ['[Ctrl + Q] to quit the program / [Ctrl + W] to view the codes',
+                     '[Ctrl + C] or Double click to copy the code']
+        explain = '1. From the menu, choose the language (or code) you wish to convert.\n' \
+                  '2. Then enter it in the "Input" field.\n' \
+                  '3. And click the "convert" button or hit Return to convert it into the "Output" column.\n' \
+                  '4. To reset two columns, use the "clear" button.'
+        info = '[Morse code translator]\n' \
+               'Version: 1.2.0 (16-08-2022)\n' \
+               'Creator: JaeyoungHan\n'
+
+        font = 'Yu Gothic UI'
+
+    elif language.get() == 2:  # Japanese
+        titles = ['モールス信号翻訳機', 'コード一覧', 'ヘルプ', '情報', 'エラー', '終了']
+        messages = ['Input欄が空白です。', '終了しますか？']
+        translate = ['英語 → モールス', 'モールス → 英語', '日本語 → モールス', 'モールス → 日本語']
+        buttons = ['変換', '初期化', 'コピー', '閉じる']
+        shortcuts = ['［Ctrl + Q］でプログラムが終了 / ［Ctrl + W］でコード一覧',
+                     '［Ctrl + C］やダブルクリックでコピー']
+        explain = '1. メニューから変換するものを選んでください。\n' \
+                  '2. 「Input」欄に入力してください。\n' \
+                  '3. 「変換」ボタンやエンターキーで「Output」欄に変換結果が出ます。\n' \
+                  '4. 「初期化」ボタンやEscキーで「Input」「Output」欄が空白になります。'
+        info = '[Morse code translator]\n' \
+               'バージョン: 1.2.0 (2022-08-16)\n' \
+               '制作: JaeyoungHan\n'
+
+        font = 'Helvetica'
+
+    elif language.get() == 3:  # Korean
+        titles = ['모스부호 번역기', '모스부호 표', '도움말', '정보', '오류', '종료']
+        messages = ['입력이 공백입니다.', '종료하시겠습니까?']
+        translate = ['영어 → 모스부호', '모스부호 → 영어', '일어 → 모스부호', '모스부호 → 일어']
+        buttons = ['변환', '초기화', '복사', '닫기']
+        shortcuts = ['[Ctrl + Q]로 종료 / [Ctrl + W]로 모스부호 표 일람',
+                     '[Ctrl + C]나 더블클릭으로 복사']
+        explain = '1. 메뉴에서 무엇을 변환할지 선택해주세요.\n' \
+                  '2. Input란에 입력해주세요.\n' \
+                  '3. "변환"버튼이나 엔터를 누르면 Output란에 변환되어 출력됩니다.\n' \
+                  '4. "초기화"버튼이나 Esc를 누르면 Input과 Output이 초기화됩니다.'
+        info = '[Morse code translator]\n' \
+               '버전: 1.2.0 (2022-08-16)\n' \
+               '제작: JaeyoungHan\n'
+
+        font = 'Meiryo UI'
+
+    # text and font
+    btn_eng_to_morse['text'] = translate[0]
+    btn_morse_to_eng['text'] = translate[1]
+    btn_jpn_to_morse['text'] = translate[2]
+    btn_morse_to_jpn['text'] = translate[3]
+
+    btn_eng_to_morse['font'] = font, 9
+    btn_morse_to_eng['font'] = font, 9
+    btn_jpn_to_morse['font'] = font, 9
+    btn_morse_to_jpn['font'] = font, 9
+
+    button_convert['text'] = buttons[0]
+    button_clear['text'] = buttons[1]
+    button_copy['text'] = buttons[2]
+
+    button_convert['font'] = font, 10
+    button_clear['font'] = font, 10
+    button_copy['font'] = font, 10
+
+    label_shortcut['text'] = shortcuts[0]
+    label_shortcut['font'] = font, 9
+
+
 # Font & Colors ====================================================
 font = 'Yu Gothic UI'
-color_bg1 = '#CCCCCC'
-color_bg2 = '#666666'
-color_fg1 = '#F3F3F3'
-color_fg2 = '#222222'
+color_bg1 = '#CCCCCC'  # light gray
+color_bg2 = '#666666'  # dark gray
+color_fg1 = '#F3F3F3'  # white
+color_fg2 = '#222222'  # black
+color_blue = '#1e80c1'  # blue
+
+
+# Texts ============================================================
+titles = ['Morse Code Translator', 'Code List', 'Help', 'Info', 'Error', 'Quit']
+messages = ['The input column is blank.', 'Really quit?']
+translate = ['Eng → Morse', 'Morse → Eng', 'Jpn → Morse', 'Morse → Jpn']
+buttons = ['convert', 'clear', 'copy output', 'exit']
+shortcuts = ['[Ctrl + Q] to quit the program / [Ctrl + W] to view the codes',
+             '[Ctrl + C] or Double click to copy the code']
+explain = '1. From the menu, choose the language (or code) you wish to convert.\n' \
+          '2. Then enter it in the "Input" field.\n'\
+          '3. And click the "convert" button or hit Return to convert it into the "Output" column.\n'\
+          '4. To reset two columns, use the "clear" button.'
+info = '[Morse code translator]\n'\
+       'Version: 1.2.0 (16-08-2022)\n'\
+       'Creator: JaeyoungHan\n'
 
 
 # Main code ========================================================
 # > main window
 root = tk.Tk()
-root.title('Morse Code Translator')
-root.geometry('500x370+100+100')
+root.title(titles[0])
+root.geometry('500x315+100+100')
 root.resizable(False, False)
 root['bg'] = color_bg1
 
-# > version
-label_version = tk.Label(root, text='Ver 1.1.0', font=(font, 10), fg='blue', bg=color_bg1)
-label_version.place(x=440, y=344)
-
-# > attention
-attention_eng = '* Please select the menu and enter the text in the "input" column. *'
-attention_jpn = '* メニューを選んで、「input」欄に入力してください。ひらがなのみお願いします。*'
-label_attention_eng = tk.Label(root, text=attention_eng, font=(font, 11), fg='red', bg=color_bg1)
-label_attention_jpn = tk.Label(root, text=attention_jpn, font=(font, 11), fg='red', bg=color_bg1)
-label_attention_eng.place(x=25, y=7)
-label_attention_jpn.place(x=20, y=27)
-
 # > menu
+menubar = tk.Menu(root)
+menu_file = tk.Menu(menubar, tearoff=0)
+menu_file.add_command(label='Code list', command=view_code, accelerator='Ctrl+W')
+menu_file.add_separator()
+menu_file.add_command(label='Help', command=open_help, accelerator='F1')
+menu_file.add_command(label='About..', command=open_program_info, accelerator='F12')
+menu_file.add_separator()
+menu_file.add_command(label='Exit', command=exit_window, accelerator='Ctrl+Q')
+menubar.add_cascade(label='Info', menu=menu_file)
+
+language = tk.IntVar()
+menu_config = tk.Menu(menubar, tearoff=0)
+menu_config_lang = tk.Menu(menu_config, tearoff=0)
+menu_config_lang.add_radiobutton(label='English', value=1, variable=language, command=change_language)
+menu_config_lang.add_radiobutton(label='日本語', value=2, variable=language, command=change_language)
+menu_config_lang.add_radiobutton(label='한국어', value=3, variable=language, command=change_language)
+menu_config.add_cascade(label='Languages', menu=menu_config_lang)
+menubar.add_cascade(label='Options', menu=menu_config)
+
+root.config(menu=menubar)
+
+# > frame
+menu_frame = tk.Frame(root, height=85, width=300, relief='ridge', bd=2, bg=color_bg1, padx=2, pady=2)
+menu_frame.place(x=5, y=5)
+input_frame = tk.Frame(root, height=57, width=490, relief='ridge', bd=2, bg=color_bg1, padx=2, pady=2)
+input_frame.place(x=5, y=95)
+output_frame = tk.Frame(root, height=57, width=490, relief='ridge', bd=2, bg=color_bg1, padx=2, pady=2)
+output_frame.place(x=5, y=215)
+
+# > selection
 label_menu = tk.Label(root, text='Menu', font=(font, 11), fg=color_fg1, bg=color_bg2)
-label_menu.place(x=10, y=70)
+label_menu.place(x=10, y=10)
 
 menu_var = tk.IntVar()
-btn_eng_to_morse = tk.Radiobutton(root, text="Eng → Morse", value=1, variable=menu_var, bg=color_bg1)
-btn_morse_to_eng = tk.Radiobutton(root, text="Morse → Eng", value=2, variable=menu_var, bg=color_bg1)
-btn_jpn_to_morse = tk.Radiobutton(root, text="Jpn → Morse", value=3, variable=menu_var, bg=color_bg1)
-btn_morse_to_jpn = tk.Radiobutton(root, text="Morse → Jpn", value=4, variable=menu_var, bg=color_bg1)
+btn_eng_to_morse = tk.Radiobutton(root, text=translate[0], font=(font, 9), value=1, variable=menu_var, bg=color_bg1)
+btn_morse_to_eng = tk.Radiobutton(root, text=translate[1], font=(font, 9), value=2, variable=menu_var, bg=color_bg1)
+btn_jpn_to_morse = tk.Radiobutton(root, text=translate[2], font=(font, 9), value=3, variable=menu_var, bg=color_bg1)
+btn_morse_to_jpn = tk.Radiobutton(root, text=translate[3], font=(font, 9), value=4, variable=menu_var, bg=color_bg1)
 btn_eng_to_morse.select()
 
-btn_eng_to_morse.place(x=10, y=100)
-btn_morse_to_eng.place(x=150, y=100)
-btn_jpn_to_morse.place(x=10, y=120)
-btn_morse_to_jpn.place(x=150, y=120)
+btn_eng_to_morse.place(x=10, y=40)
+btn_morse_to_eng.place(x=150, y=40)
+btn_jpn_to_morse.place(x=10, y=60)
+btn_morse_to_jpn.place(x=150, y=60)
 
 # > input entry
 label_input = tk.Label(root, text='Input', font=(font, 11), fg=color_fg1, bg=color_bg2)
-label_input.place(x=10, y=155)
-entry_input = tk.Entry(width=68)
-entry_input.place(x=10, y=180, height=20)
+label_input.place(x=10, y=100)
+entry_input = tk.Entry(width=59, font=(font, 11))
+entry_input.place(x=10, y=125, height=20)
 
 # > output entry
 label_output = tk.Label(root, text='Output', font=(font, 11), fg=color_fg1, bg=color_bg2)
-label_output.place(x=10, y=275)
-entry_output = tk.Entry(width=68)
-entry_output.place(x=10, y=300, height=20)
+label_output.place(x=10, y=220)
+entry_output = tk.Entry(width=59, font=(font, 11), fg=color_blue)
+entry_output.place(x=10, y=245, height=20)
 
 # > buttons
-button_convert = tk.Button(text='convert', font=(font, 10), command=start_convert, fg=color_fg1, bg=color_bg2)
-button_clear = tk.Button(text='clear', font=(font, 10), command=clear_all, fg=color_fg1, bg=color_bg2)
-button_code = tk.Button(text='code list', font=(font, 10), command=view_code, fg=color_fg1, bg=color_bg2)
-button_copy = tk.Button(text='copy output', font=(font, 10),
+button_convert = tk.Button(text=buttons[0], font=(font, 10), command=start_convert, fg=color_fg1, bg=color_bg2)
+button_clear = tk.Button(text=buttons[1], font=(font, 10), command=clear_all, fg=color_fg1, bg=color_bg2)
+button_copy = tk.Button(text=buttons[2], font=(font, 10),
                         command=lambda: clip.copy(entry_output.get()), fg=color_fg1, bg=color_bg2)
-button_convert.place(x=35, y=230, width=100)
-button_clear.place(x=145, y=230, width=100)
-button_code.place(x=255, y=230, width=100)
-button_copy.place(x=365, y=230, width=100)
+button_convert.place(x=80, y=168, width=100)
+button_clear.place(x=200, y=168, width=100)
+button_copy.place(x=320, y=168, width=100)
 
 # > shortcuts
-label_shortcut1 = tk.Label(root, text='[Ctrl + Q] to quit the program', font=(font, 9), fg=color_fg2, bg=color_bg1)
-label_shortcut2 = tk.Label(root, text='[Ctrl + W] to view the codes', font=(font, 9), fg=color_fg2, bg=color_bg1)
-label_shortcut1.place(x=10, y=325)
-label_shortcut2.place(x=10, y=344)
+label_shortcut = tk.Label(root, text=shortcuts[0], font=(font, 9), fg=color_fg2, bg=color_bg1)
+label_shortcut.place(x=10, y=289)
+
+# > version
+label_version = tk.Label(root, text='Ver 1.2.0', font=(font, 10), fg='blue', bg=color_bg1)
+label_version.place(x=440, y=289)
 
 # > key binding
 root.bind('<Return>', start_convert)
 root.bind('<Escape>', clear_all)
 root.bind('<Control-q>', exit_window)
 root.bind('<Control-w>', view_code)
+root.bind('<F1>', open_help)
+root.bind('<F12>', open_program_info)
 
 # > quit program
 root.protocol('WM_DELETE_WINDOW', exit_window)
