@@ -1,7 +1,7 @@
 # Morse-code-translator
 - A translator for morse code.
 
-# Support langauge
+# Languages which support conversion
 - English
 - Japanese
 
@@ -11,6 +11,11 @@
 - Click the "code list" button to view all of the morse codes.
 
 # Update history
+## Ver 1.2.0
+- Enabled to change the langauge of the program to English, Japanese, Korean.
+- Added a menu bar.
+  - Menu 'Info': 'Code list', 'Help', 'About..', 'Exit'
+  - Menu 'Options': 'Languages'
 ## Ver 1.1.1
 - Fixed some codes.
 ## Ver 1.1.0
