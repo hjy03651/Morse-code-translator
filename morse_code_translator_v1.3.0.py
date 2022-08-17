@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# UTF-8 encoding when using Japanese
 
 """
 Morse Code Translator (Ver 1.3.0)
