@@ -11,6 +11,9 @@
 - Click the "code list" button to view all of the morse codes.
 
 # Update history
+## Ver 1.3.0
+- Enabled to convert katakana.
+- Fixed bugs.
 ## Ver 1.2.1
 - Fixed bugs.
 ## Ver 1.2.0
