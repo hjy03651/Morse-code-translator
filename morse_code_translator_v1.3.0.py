@@ -2,8 +2,8 @@
 # UTF-8 encoding when using Japanese
 
 """
-Morse Code Translator (Ver 1.2.1)
-Date: 2022-08-16
+Morse Code Translator (Ver 1.3.0)
+Date: 2022-08-17
 Creator: JaeyoungHan
 
 Version History:
@@ -11,6 +11,7 @@ Ver 1.0.0 // 2022-08-09
 Ver 1.1.0 // 2022-08-12
 Ver 1.1.1 // 2022-08-12
 Ver 1.2.0 // 2022-08-16
+Ver 1.2.1 // 2022-08-16
 """
 
 # Import modules ===================================================
@@ -45,7 +46,7 @@ morse_jpn_sym = {'.----': '１', '..---': '２', '...--': '３', '....-': '４',
                  '--...': '７', '---..': '８', '----.': '９', '-----': '０',
                  '..': '゛', '..--.': '゜', '.-.-..': '。', '.-.-.-': '、',
                  '---...': '：', '-.-.-.': '；', '..--..': '？', '-.-.--': '！',
-                 '.----.': "'", '.-..-.': '"', '-..-.': '・', '-.--.': '（', '-.--.-': '）',
+                 '.----.': "‘", '.-..-.': '”', '-..-.': '・', '-.--.': '（', '-.--.-': '）',
                  '.-.-.': '＋', '-....-': '－', '-...-': '＝', '..--.-': '＿',
                  '.-...': '＆', '.--.-.': '＠', '...-..-': '＄'}  # em-size characters
 
@@ -57,7 +58,7 @@ reverse_morse_jpn_sym = {v: k for k, v in morse_jpn_sym.items()}
 kana_to_dakuten = {'か': 'が', 'き': 'ぎ', 'く': 'ぐ', 'け': 'げ', 'こ': 'ご',
                    'さ': 'ざ', 'し': 'じ', 'す': 'ず', 'せ': 'ぜ', 'そ': 'ぞ',
                    'た': 'だ', 'ち': 'ぢ', 'つ': 'づ', 'て': 'で', 'と': 'ど',
-                   'は': 'ば', 'ひ': 'び', 'ふ': 'ぶ', 'へ': 'べ', 'ほ': 'ぼ'}
+                   'は': 'ば', 'ひ': 'び', 'ふ': 'ぶ', 'へ': 'べ', 'ほ': 'ぼ', 'う': 'ゔ'}
 kana_to_handakuten = {'は': 'ぱ', 'ひ': 'ぴ', 'ふ': 'ぷ', 'へ': 'ぺ', 'ほ': 'ぽ'}
 
 dakuten_to_kana = {v: k for k, v in kana_to_dakuten.items()}
@@ -65,6 +66,23 @@ handakuten_to_kana = {v: k for k, v in kana_to_handakuten.items()}
 
 small_kana = {'ぁ': 'あ', 'ぃ': 'い', 'ぅ': 'う', 'ぇ': 'え', 'ぉ': 'お', 'ヵ': 'か',
               'ヶ': 'け', 'っ': 'つ', 'ゃ': 'や', 'ゅ': 'ゆ', 'ょ': 'よ', 'ゎ': 'わ'}
+
+katakana_to_hiragana = {'ア': 'あ', 'イ': 'い', 'ウ': 'う', 'エ': 'え', 'オ': 'お', 'ヴ': 'ゔ',
+                        'カ': 'か', 'キ': 'き', 'ク': 'く', 'ケ': 'け', 'コ': 'こ',
+                        'ガ': 'が', 'ギ': 'ぎ', 'グ': 'ぐ', 'ゲ': 'げ', 'ゴ': 'ご',
+                        'サ': 'さ', 'シ': 'し', 'ス': 'す', 'セ': 'せ', 'ソ': 'そ',
+                        'ザ': 'ざ', 'ジ': 'じ', 'ズ': 'ず', 'ゼ': 'ぜ', 'ゾ': 'ぞ',
+                        'タ': 'た', 'チ': 'ち', 'ツ': 'つ', 'テ': 'て', 'ト': 'と', 'ッ': 'っ',
+                        'ダ': 'だ', 'ヂ': 'ぢ', 'ヅ': 'づ', 'デ': 'で', 'ド': 'ど',
+                        'ナ': 'な', 'ニ': 'に', 'ヌ': 'ぬ', 'ネ': 'ね', 'ノ': 'の',
+                        'ハ': 'は', 'ヒ': 'ひ', 'フ': 'ふ', 'ヘ': 'へ', 'ホ': 'ほ',
+                        'バ': 'ば', 'ビ': 'び', 'ブ': 'ぶ', 'ベ': 'べ', 'ボ': 'ぼ',
+                        'パ': 'ぱ', 'ピ': 'ぴ', 'プ': 'ぷ', 'ペ': 'ぺ', 'ポ': 'ぽ',
+                        'マ': 'ま', 'ミ': 'み', 'ム': 'む', 'メ': 'め', 'モ': 'も',
+                        'ヤ': 'や', 'ユ': 'ゆ', 'ヨ': 'よ', 'ャ': 'ゃ', 'ュ': 'ゅ', 'ョ': 'ょ',
+                        'ラ': 'ら', 'リ': 'り', 'ル': 'る', 'レ': 'れ', 'ロ': 'ろ',
+                        'ワ': 'わ', 'ヰ': 'ゐ', 'ヱ': 'ゑ', 'ヲ': 'を', 'ン': 'ん', 'ヮ': 'ゎ',
+                        'ァ': 'ぁ', 'ィ': 'ぃ', 'ゥ': 'ぅ', 'ェ': 'ぇ', 'ォ': 'ぉ'}
 
 
 # Declare functions for program ====================================
@@ -126,15 +144,12 @@ def attach_ten(kana, ten):
     :param ten: The type of dot to attach to the letter
     :return: Dotted character
     """
-    if ten == 'daku' and kana in kana_to_dakuten.keys():
+    if ten == '゛' and kana in kana_to_dakuten.keys():
         return kana_to_dakuten[kana]
-    elif ten == 'handaku' and kana in kana_to_handakuten.keys():
+    elif ten == '゜' and kana in kana_to_handakuten.keys():
         return kana_to_handakuten[kana]
     else:
-        if ten == 'daku':
-            return kana + '゛'
-        if ten == 'handaku':
-            return kana + '゜'
+        return kana + ten
 
 
 def release_ten(kana, select):
@@ -155,7 +170,7 @@ def occur_error():
     Display a messagebox when an error occurs
     :return: Blank
     """
-    msg.showwarning(titles[4], messages[0])
+    msg.showwarning(titles[4], messages[0])  # error, input is blank
     label_input['text'] = 'Input'
     label_output['text'] = 'Output'
     return ''
@@ -167,7 +182,7 @@ def exit_window(_=None):
     :param _: Key binding (Ctrl + Q)
     :return: None
     """
-    msg_quit = msg.askquestion(titles[5], messages[1])
+    msg_quit = msg.askquestion(titles[5], messages[1])  # quit, rly quit?
     if msg_quit == 'yes':
         root.destroy()
 
@@ -196,6 +211,8 @@ def change_japanese_to_morse(text):
     if not text:
         return occur_error()
     for k in text:
+        if k in katakana_to_hiragana.keys():
+            k = katakana_to_hiragana[k]
         if k in dakuten_to_kana.keys():
             output += release_ten(k, 'daku')
         elif k in handakuten_to_kana.keys():
@@ -232,14 +249,15 @@ def change_morse_to_japanese(text):
     if not text:
         return occur_error()
 
-    output = morse_to_text(text, 'jpn')
-    for k in output:
-        index = output.index(k)
-        if k == '゛':
-            output = output[:index - 1] + attach_ten(output[index - 1], 'daku') + output[index + 1:]
-        elif k == '゜':
-            output = output[:index - 1] + attach_ten(output[index - 1], 'handaku') + output[index + 1:]
-    return output
+    temp = morse_to_text(text, 'jpn')  # need to think another variation name
+    output = []
+    for n, k in enumerate(temp):
+        if k in ('゛', '゜') and temp[n - 1].isalpha():
+            output.pop()
+            output.append(attach_ten(temp[n - 1], k))
+        else:
+            output.append(k)
+    return ''.join(output)
 
 
 # Declare functions for button event ===============================
@@ -379,7 +397,7 @@ def open_help(_=None):
     """
     # main window
     table = tk.Toplevel(root)
-    table.title(titles[2])
+    table.title(titles[2])  # help
     table.geometry('590x130+500+300')
     table.resizable(False, False)
     table['bg'] = COLOR_BG1
@@ -410,7 +428,7 @@ def open_program_info(_=None):
     """
     # main window
     table = tk.Toplevel(root)
-    table.title(titles[3])
+    table.title(titles[3])  # info
     table.geometry('250x100+500+300')
     table.resizable(False, False)
     table['bg'] = COLOR_BG1
@@ -449,7 +467,7 @@ def change_language():
                   '3. And click the "convert" button or hit Return to convert it into the "Output" column.\n' \
                   '4. To reset two columns, use the "clear" button.'
         info = '[Morse code translator]\n' \
-               'Version: 1.2.0 (16-08-2022)\n' \
+               'Version: 1.3.0 (17-08-2022)\n' \
                'Creator: JaeyoungHan\n'
 
         font = 'Yu Gothic UI'
@@ -464,9 +482,10 @@ def change_language():
         explain = '1. メニューから変換するものを選んでください。\n' \
                   '2. 「Input」欄に入力してください。\n' \
                   '3. 「変換」ボタンやエンターキーで「Output」欄に変換結果が出ます。\n' \
-                  '4. 「初期化」ボタンやEscキーで「Input」「Output」欄が空白になります。'
+                  '4. 「初期化」ボタンやEscキーで「Input」「Output」欄が空白になります。\n' \
+                  '※日本語の場合、半角記号と漢字は認識できません。'
         info = '[Morse code translator]\n' \
-               'バージョン: 1.2.0 (2022-08-16)\n' \
+               'バージョン: 1.3.0 (2022-08-17)\n' \
                '制作: JaeyoungHan\n'
 
         font = 'Helvetica'
@@ -480,10 +499,10 @@ def change_language():
                      '[Ctrl + C]나 더블클릭으로 복사']
         explain = '1. 메뉴에서 무엇을 변환할지 선택해주세요.\n' \
                   '2. Input란에 입력해주세요.\n' \
-                  '3. "변환"버튼이나 엔터를 누르면 Output란에 변환되어 출력됩니다.\n' \
-                  '4. "초기화"버튼이나 Esc를 누르면 Input과 Output이 초기화됩니다.'
+                  '3. \'변환\'버튼이나 엔터를 누르면 Output란에 변환되어 출력됩니다.\n' \
+                  '4. \'초기화\'버튼이나 Esc를 누르면 Input과 Output이 초기화됩니다.'
         info = '[Morse code translator]\n' \
-               '버전: 1.2.0 (2022-08-16)\n' \
+               '버전: 1.3.0 (2022-08-17)\n' \
                '제작: JaeyoungHan\n'
 
         font = 'Meiryo UI'
@@ -532,7 +551,7 @@ explain = '1. From the menu, choose the language (or code) you wish to convert.\
           '3. And click the "convert" button or hit Return to convert it into the "Output" column.\n'\
           '4. To reset two columns, use the "clear" button.'
 info = '[Morse code translator]\n'\
-       'Version: 1.2.0 (16-08-2022)\n'\
+       'Version: 1.3.0 (17-08-2022)\n'\
        'Creator: JaeyoungHan\n'
 
 
@@ -616,7 +635,7 @@ label_shortcut = tk.Label(root, text=shortcuts[0], font=(font, 9), fg=COLOR_FG2,
 label_shortcut.place(x=10, y=289)
 
 # > version
-label_version = tk.Label(root, text='Ver 1.2.0', font=(font, 10), fg='blue', bg=COLOR_BG1)
+label_version = tk.Label(root, text='Ver 1.3.0', font=(font, 10), fg='blue', bg=COLOR_BG1)
 label_version.place(x=440, y=289)
 
 # > key binding
